@@ -2,8 +2,8 @@
 
 The `TouchSensor` class implements a capacitive touch sensor using a relaxation oscillator principle, driven by a PIO state machine on the RP2040. The touch pad is connected with:
 
-- A **100 kΩ resistor** to ground.
-- A **10 kΩ resistor** to a GPIO pin (used for charge/discharge timing).
+- A **470 kΩ resistor** to ground.
+- A **1 kΩ resistor** to a GPIO pin (used for charge/discharge timing).
 
 ### Operation
 
@@ -13,9 +13,15 @@ Calling `touch_sensor.trigger()` initiates a single acquisition cycle:
 2. The pin is then set to input mode.
 3. The PIO measures the discharge time until the pin reaches logic low.
 
-Typical timing:
-- **No touch**: ~1.5 µs
-- **Touch**: ≥3.0 µs
+Typical timing:  When a proper earth is establihed (like USB cable to PC, or DSO attachment,the timings vary.  I found 470k/1k with a 2us threshold works for me
+- 100k/10k earthed:   idle 1.2 - 1.2   touched 2.3 - 3.8
+- 470k/10k no earth:  idle 1.2 - 1.2   touched 1.6 - 2.4
+
+- 470k/0k  earthed:   idle 1.5 - 1.6   touched 4.5 - 4.9
+- 470k/0k no earth:   idle 1.5 - 1.6   touched 2.5 - 4.8
+
+- 470k/1k  earthed:   idle 1.6 - 1.7   touched 3.5 - 2.8
+- **470k/1k no earth**:   idle 1.5 - 1.6   touched 2.5 - 2.8
 
 The acquisition frequency is controlled externally (typically 5–10 ms intervals). The ISR executes in under 0.9 µs, ensuring low-latency sampling.
 
