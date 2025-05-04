@@ -7,13 +7,13 @@ The `TouchSensor` class implements a capacitive touch sensor using a relaxation 
 
 ### Operation
 
-Calling `touch_sensor.trigger()` initiates a single acquisition cycle:
+Calling `touch_sensor.trigger()` initiates a single acquisition cycle, it is non-blocking:
 
 1. The PIO drives the GPIO pin high for **20 µs** to charge the plate.
 2. The pin is then set to input mode.
 3. The PIO measures the discharge time until the pin reaches logic low.
 
-Typical timing:  When a proper earth is establihed (like USB cable to PC, or DSO attachment,the timings vary.  I found 470k/1k with a 2us threshold works for me
+Typical timing:  When a proper earth is established (like USB cable to PC, or DSO attachment,the timings vary.  I found 470k/1k with a 2us threshold works for me
 - 100k/10k earthed:   idle 1.2 - 1.2   touched 2.3 - 3.8
 - 470k/10k no earth:  idle 1.2 - 1.2   touched 1.6 - 2.4
 
@@ -52,7 +52,7 @@ new_symbol = touch_sensor.decoded
 
 ### Debugging (Optional)
 
-- **GPIO 8** can be used to observe discharge activity directly on a scope or analyser.
+- **GPIO 8** (the pin after the touch pin) can be used to observe discharge activity directly on a scope or analyser.
 
 ---
 
@@ -93,13 +93,3 @@ if new_symbol:
 ```
 
 Decoded symbols are available once the input sequence times out (default 1000 ms with no touch).
-
----
-
-### Notes
-
-- Sampling is **non-blocking** and managed via hardware timer.
-- The average filter smooths discharge time variability.
-- Timing bounds (`TOUCH_TIME_MIN`, `TOUCH_TIME_MAX`) ensure robustness against spurious signals.
-
----
